@@ -1,0 +1,38 @@
+pipeline {
+ agent {
+    node {
+        label 'label1'
+        
+    }
+}
+    tools{
+        jdk "jdk11"
+        maven "maven3"
+    }
+
+    stages {
+        stage('git checkout') {
+            steps {
+                      git branch: 'main', url: 'https://github.com/harishkrishna5/JavaProject.git'
+            }
+        }
+    
+        stage('compile') {
+            steps {
+                sh 'mvn clean package'
+            }
+        }
+        stage('artifact') {
+            steps {
+               archiveArtifacts artifacts: 'target/*.war', followSymlinks: false
+            }
+        }
+        stage('deploy') {
+            steps {
+               deploy adapters: [tomcat9(credentialsId: 'b391239e-0d9c-435f-980a-18b33142d755', path: '', url: 'http://3.6.36.113:8080/')], contextPath: null, war: '**/*.war'
+                
+            }
+            
+        }
+    }
+}
