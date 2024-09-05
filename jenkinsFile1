@@ -1,0 +1,24 @@
+pipeline {
+    agent {
+        node { label 'label1' }
+    }
+
+    stages {
+        stage('build') {
+            steps {
+               git branch: 'main', url: 'https://github.com/harishkrishna5/JavaProject.git'
+            }
+        }
+         stage('compile') {
+            steps {
+               sh 'mvn clean package'
+            }
+        }
+         stage('artifact') {
+            steps {
+               archiveArtifacts artifacts: 'target/*.war', followSymlinks: false
+            }
+        }
+         
+    }
+}
